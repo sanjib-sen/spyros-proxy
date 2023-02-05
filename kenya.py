@@ -5,6 +5,7 @@ DB_CREATED = False
 
 
 def start__scraping():
+    print("For Sale\n")
     SALES = 'https://www.buyrentkenya.com/property-for-sale'
     page_no = 1
     while (True):
@@ -15,12 +16,16 @@ def start__scraping():
             scrape_property(p, type="FOR SALE")
         page_no += 1
         if len(soup.find_all(
-                "div", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
+                "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
             SALES += f"?page={page_no}"
+            sleep(20)
+            print("\nPage: ", page_no)
             continue
         else:
             break
 
+    sleep(30)
+    print("For Rent\n")
     RENTS = 'https://www.buyrentkenya.com/property-for-rent'
     page_no = 1
     while (True):
@@ -32,8 +37,10 @@ def start__scraping():
 
         page_no += 1
         if len(soup.find_all(
-                "div", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
+                "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
             RENTS += f"?page={page_no}"
+            sleep(20)
+            print("\nPage: ", page_no)
             continue
         else:
             break
