@@ -8,28 +8,28 @@ def start__scraping():
     print("For Sale\n")
     SALES = 'https://www.buyrentkenya.com/property-for-sale'
     page_no = 1
-    while (page_no < 548):
+    while (True):
+        SALES = 'https://www.buyrentkenya.com/property-for-sale'
         soup = use_requests(SALES)
         properties = ["https://www.buyrentkenya.com"+elem.find("a", recursive=False).get("href") for elem in soup.find_all(
             "h3", class_="hidden show-title text-black text-base leading-normal mb-1 capitalize font-normal")]
         for p in properties:
             scrape_property(p, type="FOR SALE")
         page_no += 1
-        # while (page_no < 548):
-        # if len(soup.find_all(
-        #    "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
-        SALES += f"?page={page_no}"
-        sleep(20)
-        print("\nPage: ", page_no)
-        # continue
-        # else:
-        #     break
+        if len(soup.find_all(
+           "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
+            SALES = SALES+f"?page={page_no}"
+            sleep(20)
+            print("\nPage: ", page_no)
+            continue
+        else:
+            break
 
-    sleep(30)
+    sleep(180)
     print("For Rent\n")
     RENTS = 'https://www.buyrentkenya.com/property-for-rent'
     page_no = 1
-    while (page_no < 445):
+    while (True):
         soup = use_requests(RENTS)
         properties = ["https://www.buyrentkenya.com"+elem.find("a", recursive=False).get("href") for elem in soup.find_all(
             "h3", class_="hidden show-title text-black text-base leading-normal mb-1 capitalize font-normal")]
@@ -37,14 +37,14 @@ def start__scraping():
             scrape_property(p, type="FOR RENT")
 
         page_no += 1
-        # if len(soup.find_all(
-        #         "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
-        RENTS += f"?page={page_no}"
-        sleep(20)
-        print("\nPage: ", page_no)
-        #     continue
-        # else:
-        #     break
+        if len(soup.find_all(
+                "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
+            RENTS = RENTS + f"?page={page_no}"
+            sleep(20)
+            print("\nPage: ", page_no)
+            continue
+        else:
+            break
 
 
 class Listing:
