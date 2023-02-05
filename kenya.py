@@ -7,7 +7,7 @@ DB_CREATED = False
 def start__scraping():
     print("For Sale\n")
     SALESMAIN = 'https://www.buyrentkenya.com/property-for-sale'
-    SALE = SALESMAIN
+    SALES = SALESMAIN
     page_no = 1
     while (True):
         soup = use_requests(SALES)
