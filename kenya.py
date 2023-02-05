@@ -7,6 +7,7 @@ DB_CREATED = False
 def start__scraping():
     print("For Sale\n")
     SALESMAIN = 'https://www.buyrentkenya.com/property-for-sale'
+    SALE = SALESMAIN
     page_no = 1
     while (True):
         soup = use_requests(SALES)
@@ -17,7 +18,7 @@ def start__scraping():
         page_no += 1
         if len(soup.find_all(
            "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
-            SALES = SALESMAIN+f"?page={page_no}"
+            SALES = SALES+f"?page={page_no}"
             # sleep(20)
             print("\nPage: ", page_no)
             continue
@@ -26,6 +27,7 @@ def start__scraping():
 
     # sleep(180)
     RENTSMAIN = 'https://www.buyrentkenya.com/property-for-rent'
+    RENTS = RENTSMAIN
     print("For Rent\n")
     page_no = 1
     while (True):
