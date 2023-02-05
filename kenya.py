@@ -19,13 +19,13 @@ def start__scraping():
         if len(soup.find_all(
            "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
             SALES = SALES+f"?page={page_no}"
-            sleep(20)
+            # sleep(20)
             print("\nPage: ", page_no)
             continue
         else:
             break
 
-    sleep(180)
+    # sleep(180)
     print("For Rent\n")
     RENTS = 'https://www.buyrentkenya.com/property-for-rent'
     page_no = 1
@@ -40,7 +40,7 @@ def start__scraping():
         if len(soup.find_all(
                 "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
             RENTS = RENTS + f"?page={page_no}"
-            sleep(20)
+            # sleep(20)
             print("\nPage: ", page_no)
             continue
         else:
@@ -132,7 +132,7 @@ def scrape_property(URL, type="Undefined"):
     listing.url = URL
 
     use_db(listing)
-    sleep(3)
+    # sleep(3)
 
 
 def use_db(listing_object):
