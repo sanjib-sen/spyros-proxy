@@ -6,10 +6,9 @@ DB_CREATED = False
 
 def start__scraping():
     print("For Sale\n")
-    SALES = 'https://www.buyrentkenya.com/property-for-sale'
+    SALESMAIN = 'https://www.buyrentkenya.com/property-for-sale'
     page_no = 1
     while (True):
-        SALES = 'https://www.buyrentkenya.com/property-for-sale'
         soup = use_requests(SALES)
         properties = ["https://www.buyrentkenya.com"+elem.find("a", recursive=False).get("href") for elem in soup.find_all(
             "h3", class_="hidden show-title text-black text-base leading-normal mb-1 capitalize font-normal")]
@@ -18,7 +17,7 @@ def start__scraping():
         page_no += 1
         if len(soup.find_all(
            "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
-            SALES = SALES+f"?page={page_no}"
+            SALES = SALESMAIN+f"?page={page_no}"
             # sleep(20)
             print("\nPage: ", page_no)
             continue
@@ -26,8 +25,8 @@ def start__scraping():
             break
 
     # sleep(180)
+    RENTSMAIN = 'https://www.buyrentkenya.com/property-for-rent'
     print("For Rent\n")
-    RENTS = 'https://www.buyrentkenya.com/property-for-rent'
     page_no = 1
     while (True):
         soup = use_requests(RENTS)
@@ -39,7 +38,7 @@ def start__scraping():
         page_no += 1
         if len(soup.find_all(
                 "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
-            RENTS = RENTS + f"?page={page_no}"
+            RENTS = RENTSMAIN + f"?page={page_no}"
             # sleep(20)
             print("\nPage: ", page_no)
             continue
@@ -112,7 +111,7 @@ def scrape_property(URL, type="Undefined"):
     #     "span", class_="mt-2 justify-between flex flex-row w-full text-sm text-gray-500")
 
     floors = description[description.find(
-        "floors")-3:description.find("floors")]
+        "floors")-3:description.find("floors")] if "floor" in description else "Not found"
 
     listing.title = title
     listing.address = address
