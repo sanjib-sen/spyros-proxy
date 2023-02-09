@@ -51,7 +51,7 @@ def start__scraping():
 def getPropertyFromDesc(description, property):
     description = description.replace(" ", "").lower()
     propertyStringBothSide = description[description.find(
-        property)-3:description.find(property)+4] if property in description else None
+        property)-3:description.find(property)] if property in description else None
     if propertyStringBothSide != None:
         return int(list(filter(str.isdigit, propertyStringBothSide))[0])
     else:
@@ -125,6 +125,12 @@ def scrape_property(URL, type="Undefined"):
     floors = getPropertyFromDesc(description, "floor")
     units = getPropertyFromDesc(
         description, "unit") if units == "Not found" else units
+
+    address_list = get_by_tagNclass(
+        "a", "text-accent-500 no-underline breadcrumbs__list-item__link")
+
+    address = address_list[2] + \
+        address_list[3] if address == "Not found" else address
 
     listing.title = title
     listing.address = address
