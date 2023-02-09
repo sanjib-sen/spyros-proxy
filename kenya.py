@@ -48,6 +48,16 @@ def start__scraping():
             break
 
 
+def getPropertyFromDesc(description, property):
+    description = description.replace(" ", "").lower()
+    propertyStringBothSide = description[description.find(
+        property)-3:description.find(property)+4] if property in description else None
+    if propertyStringBothSide != None:
+        return int(list(filter(str.isdigit, propertyStringBothSide))[0])
+    else:
+        return "Not found"
+
+
 class Listing:
     global_id = 0
 
@@ -112,8 +122,9 @@ def scrape_property(URL, type="Undefined"):
     # market_range = get_by_tagNclass(
     #     "span", class_="mt-2 justify-between flex flex-row w-full text-sm text-gray-500")
 
-    floors = description[description.find(
-        "floors")-3:description.find("floors")] if "floor" in description else "Not found"
+    floors = getPropertyFromDesc(description, "floor")
+    units = getPropertyFromDesc(
+        description, "unit") if units == "Not found" else units
 
     listing.title = title
     listing.address = address
