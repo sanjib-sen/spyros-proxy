@@ -6,19 +6,18 @@ DB_CREATED = False
 
 def start__scraping():
     print("For Sale\n")
-    SALESMAIN = 'https://www.buyrentkenya.com/property-for-sale'
-    SALES = SALESMAIN
+    SALES = 'https://www.buyrentkenya.com/property-for-sale'
     page_no = 1
     while (True):
         soup = use_requests(SALES)
         properties = ["https://www.buyrentkenya.com"+elem.find("a", recursive=False).get("href") for elem in soup.find_all(
-            "h3", class_="hidden show-title text-black text-base leading-normal mb-1 capitalize font-normal")]
+            "div", class_="w-full flex-1")]
         for p in properties:
             scrape_property(p, type="FOR SALE")
         page_no += 1
-        if len(soup.find_all(
-           "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
-            SALES = SALES+f"?page={page_no}"
+        if f"https://www.buyrentkenya.com/property-for-sale?page={page_no}" in [
+                a["href"] for a in soup.find_all("a", href=True)]:
+            SALES = f"https://www.buyrentkenya.com/property-for-sale?page={page_no}"
             # sleep(20)
             print("\nPage: ", page_no)
             continue
@@ -26,21 +25,20 @@ def start__scraping():
             break
 
     # sleep(180)
-    RENTSMAIN = 'https://www.buyrentkenya.com/property-for-rent'
-    RENTS = RENTSMAIN
+    RENTS = 'https://www.buyrentkenya.com/property-for-rent'
     print("For Rent\n")
     page_no = 1
     while (True):
         soup = use_requests(RENTS)
         properties = ["https://www.buyrentkenya.com"+elem.find("a", recursive=False).get("href") for elem in soup.find_all(
-            "h3", class_="hidden show-title text-black text-base leading-normal mb-1 capitalize font-normal")]
+            "div", class_="w-full flex-1")]
         for p in properties:
             scrape_property(p, type="FOR RENT")
 
         page_no += 1
-        if len(soup.find_all(
-                "a", class_="justify-center w-32 p-3 font-sans text-sm font-normal rounded text-center text-white no-underline bg-primary hover:bg-primary-darker focus:outline-none active:shadow-none")) > 0:
-            RENTS = RENTSMAIN + f"?page={page_no}"
+        if f"https://www.buyrentkenya.com/property-for-rent?page={page_no}" in [
+                a["href"] for a in soup.find_all("a", href=True)]:
+            RENTS = f"https://www.buyrentkenya.com/property-for-rent?page={page_no}"
             # sleep(20)
             print("\nPage: ", page_no)
             continue
@@ -48,12 +46,61 @@ def start__scraping():
             break
 
 
-def getPropertyFromDesc(description, property):
-    description = description.replace(" ", "").lower()
-    propertyStringBothSide = description[description.find(
-        property)-3:description.find(property)] if property in description else None
-    if propertyStringBothSide != None:
-        return int(list(filter(str.isdigit, propertyStringBothSide))[0])
+def getPropertyFromDesc(description: str, property: str):
+    description = description.lower()
+    if property in description:
+        index_property = description.find(property)
+        prev_full_stop_index = 0
+        next_full_stop_index = 0
+        idx = index_property-1
+        while (idx > 0):
+            if description[idx] == ".":
+                prev_full_stop_index = idx
+                break
+            idx -= 1
+        if prev_full_stop_index == 0:
+            return "Not found"
+        idx = index_property+len(property)
+        while (idx < len(description)):
+            if description[idx] == ".":
+                next_full_stop_index = idx
+                break
+            idx += 1
+        if next_full_stop_index == 0:
+            return "Not found"
+
+        full_sentence = description[prev_full_stop_index +
+                                    1:next_full_stop_index]
+
+        words = full_sentence.split(" ")
+
+        idx = 0
+        for word in words:
+            if property in word:
+                property_word_idx = idx
+                break
+            idx += 1
+
+        if len(words) == property_word_idx+1:
+            if words[property_word_idx-1].isdigit():
+                return words[property_word_idx-1]
+            else:
+                return "Not found"
+        elif words[property_word_idx+1].isdigit() and not words[property_word_idx-1].isdigit():
+            return words[property_word_idx+1]
+        elif words[property_word_idx-1].isdigit() and not words[property_word_idx+1].isdigit():
+            return words[property_word_idx+1]
+        elif words[property_word_idx-1].isdigit() and words[property_word_idx+1].isdigit():
+            return words[property_word_idx+1]
+        else:
+            return "Not found"
+
+            # propertyStringBothSide = description[description.find(
+            #     property)-3:description.find(property)] if property in description else None
+            # if propertyStringBothSide != None:
+            #     return int(list(filter(str.isdigit, propertyStringBothSide))[0])
+            # else:
+            #     return "Not found"
     else:
         return "Not found"
 
@@ -123,15 +170,16 @@ def scrape_property(URL, type="Undefined"):
     #     "span", class_="mt-2 justify-between flex flex-row w-full text-sm text-gray-500")
 
     floors = getPropertyFromDesc(description, "floor")
+    floors = floors if floors.isdigit() else "Not found"
     units = getPropertyFromDesc(
         description, "unit") if units == "Not found" else units
+    units = units if units.isdigit() else "Not found"
 
-    address_list = get_by_tagNclass(
-        "a", "text-accent-500 no-underline breadcrumbs__list-item__link")
+    address_list = [elem.text.strip() for elem in soup.find_all(
+        "a", "text-accent-500 no-underline breadcrumbs__list-item__link")]
 
-    address = address_list[2] + \
+    address = address_list[2] + "," + \
         address_list[3] if address == "Not found" else address
-
     listing.title = title
     listing.address = address
     listing.units = units
